@@ -37,11 +37,24 @@ Google Play'in kısıtlı izin beyan formuna da gerek yok.
 | Beyaz liste, kargo modu, geçmiş | ✓ | ✓ |
 | 444, yurt dışı, rehber dışı herkes, gece modu, önek engelleme | | ✓ |
 
-## Otomatik derleme
+## Testler ve otomatik derleme
 
-Her `main` push'unda GitHub Actions birim testlerini çalıştırır, debug APK üretir ve lint
-bulgularını uyarı olarak gösterir (Actions sekmesi). APK, çalıştırmanın "Artifacts" bölümünden
-indirilebilir.
+`gradlew.bat testDebugUnitTest` 71 test çalıştırır:
+
+| Test | Ne doğrular |
+| --- | --- |
+| `PhoneNumbersTest`, `RuleEngineTest` | Numara biçimleri, tüm kurallar, Pro kilidi, kargo modu, gece aralığı |
+| `SettingsStoreTest`, `HistoryStoreTest` | Ayarların ve geçmişin cihazda doğru saklanması, 300 kayıt sınırı |
+| `CallScreeningLogicTest` | Gelen aramaya verilen karar, geçmiş kaydı, bildirim |
+| `NotifierTest` | Bildirim kanalları, izin kontrolü, haftalık özet metni |
+| `ScreensTest` | Tüm ekranlardaki düğmeler, geçişler, Pro ekranına yönlendirme |
+| `MainActivitySmokeTest` | Gerçek uygulamayı açıp listeler, ücretsiz sınır, ayarlar uçtan uca |
+| `ScreenshotTest` | Her ekranın PNG görüntüsü (açık ve koyu tema) |
+
+Her `main` push'unda GitHub Actions testleri çalıştırır, debug APK üretir, lint yapar ve ekran
+görüntülerini `screenshots` dalına koyar. APK, çalıştırmanın "Artifacts" bölümünden indirilebilir.
+
+Gerçek arama engellemesi yalnızca gerçek telefonda denenebilir (aşağıdaki adımlar).
 
 ## Çalıştırma
 
@@ -67,9 +80,9 @@ indirilebilir.
 - [ ] Ayarlar > Lisans testi: kendi Gmail adresini ekle (ücretsiz test satın alması için)
 - [ ] `store/privacy-policy.html` dosyasındaki köşeli parantezleri doldurup şirket sitende yayınla,
       adresi Play Console'a ve `ui/Links.kt` içindeki `PRIVACY_POLICY` sabitine yaz
-- [ ] Görseller: `store/graphics/icon-512.png` (uygulama simgesi) ve
-      `store/graphics/feature-graphic-1024x500.png` (öne çıkan grafik); ekran görüntülerini
-      gerçek telefondan al
+- [ ] Görseller: `store/graphics/icon-512.png` (uygulama simgesi),
+      `store/graphics/feature-graphic-1024x500.png` (öne çıkan grafik) ve
+      `store/screenshots/` (6 telefon ekran görüntüsü, 1233x2466)
 - [ ] Mağaza girişi: `store/STORE_LISTING.md`
 - [ ] Data safety: `store/STORE_LISTING.md` içindeki cevaplar
 - [ ] İçerik derecelendirmesi, hedef kitle (18+), reklam yok beyanı
@@ -78,7 +91,5 @@ indirilebilir.
 
 ## Sonraki sürüm fikirleri
 
-- Haftalık "bu hafta X arama engellendi" bildirimi (paylaşılabilir kart)
-- Gece modu saatlerini değiştirme
 - Ana ekran widget'ı
 - İngilizce mağaza sayfası ve arayüz

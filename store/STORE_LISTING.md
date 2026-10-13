@@ -67,7 +67,13 @@ arama engelleyici · kara liste · çağrı engelleme
 Kural: aynı kelimeyi liste halinde tekrar etmek (keyword stuffing) Play politikasına aykırıdır;
 kelimeler yalnızca cümle içinde geçer.
 
-## Ekran görüntüsü başlıkları (telefon, 1080x1920, en az 4 adet)
+## Ekran görüntüleri
+
+`store/screenshots/` klasöründeki 6 dosya doğrudan yüklenebilir (1233x2466, 2:1 oranı Play sınırı
+içinde). Testler her derlemede yeniden üretir; güncel hali repo'nun `screenshots` dalında.
+İstersen aşağıdaki başlıklarla Canva vb. üzerinde çerçeveleyebilirsin.
+
+## Ekran görüntüsü başlıkları
 
 1. "0850 ve spam aramalar artık çalmasın" (ana ekran, Koruma açık, sayaçlar)
 2. "Bu hafta 23 arama engellendi" (geçmiş ekranı)
