@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -29,6 +29,17 @@ jobs:
       - name: Lint
         run: ./gradlew lintDebug
         continue-on-error: true
+
+      # Lint bulgularını iş özetinde ve uyarı olarak göster (indirmeden okunabilsin).
+      - name: Lint bulguları
+        if: always()
+        run: |
+          f=app/build/reports/lint-results-debug.txt
+          [ -f "$f" ] || { echo "Lint raporu yok"; exit 0; }
+          tail -n 1 "$f"
+          grep -E ": (Error|Warning): " "$f" | head -45 | while IFS= read -r line; do
+            echo "::warning title=lint::${line}"
+          done
 
       - uses: actions/upload-artifact@v4
         if: always()
