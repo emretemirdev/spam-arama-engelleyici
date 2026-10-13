@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Telefondaki simge adı. Mağaza başlığı ayrıca Play Console'dan girilir (store/STORE_LISTING.md). -->
+    <string name="app_name">Arama Engelle</string>
+</resources>
