@@ -54,17 +54,17 @@ object SampleData {
 
     val offers = listOf(
         BillingRepository.Offer(
-            id = "yillik", title = "Yıllık", price = "₺149,99 / yıl",
+            id = "yillik", title = "Yıllık", price = "₺224,99 / yıl",
             note = "7 gün ücretsiz, sonra otomatik yenilenir, istediğin zaman iptal edebilirsin",
             details = null, offerToken = null,
         ),
         BillingRepository.Offer(
-            id = "aylik", title = "Aylık", price = "₺29,99 / ay",
+            id = "aylik", title = "Aylık", price = "₺44,99 / ay",
             note = "otomatik yenilenir, istediğin zaman iptal edebilirsin",
             details = null, offerToken = null,
         ),
         BillingRepository.Offer(
-            id = "pro_omur_boyu", title = "Ömür boyu", price = "₺299,99",
+            id = "pro_omur_boyu", title = "Ömür boyu", price = "₺449,99",
             note = "Tek seferlik ödeme, abonelik yok",
             details = null, offerToken = null,
         ),

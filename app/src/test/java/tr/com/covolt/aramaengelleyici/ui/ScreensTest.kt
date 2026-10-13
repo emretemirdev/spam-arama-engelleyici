@@ -77,7 +77,7 @@ class ScreensTest {
         compose.onNodeWithTag("rule_UNKNOWN").assertIsOff().performClick()
         assertTrue("rule:UNKNOWN:true" in actions.calls)
         compose.onNodeWithText("Hiçbir istenmeyen arama kalmasın").assertIsDisplayed()
-        compose.onNodeWithText("Yıllık · ₺149,99 / yıl").performClick()
+        compose.onNodeWithText("Yıllık · ₺224,99 / yıl").performClick()
         assertTrue("purchase:yillik" in actions.calls)
     }
 
@@ -180,7 +180,7 @@ class ScreensTest {
             AppTheme { ProScreen(SampleData.state(isPro = true), actions, SnackbarHostState(), onBack = {}) }
         }
         compose.onNodeWithText("Pro üyeliğin aktif").assertIsDisplayed()
-        assertEquals(0, compose.onAllNodesWithTextCount("₺29,99 / ay"))
+        assertEquals(0, compose.onAllNodesWithTextCount("₺44,99 / ay"))
     }
 
     @Test

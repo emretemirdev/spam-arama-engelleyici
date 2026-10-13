@@ -107,8 +107,8 @@ içinde). Testler her derlemede yeniden üretir; güncel hali repo'nun `screensh
 | Ürün | Kimlik | Tür | Önerilen fiyat |
 | --- | --- | --- | --- |
 | Pro abonelik | `pro` | Abonelik | — |
-| ↳ Aylık temel plan | `aylik` | 1 ay, otomatik yenilenen | 29,99 TL |
-| ↳ Yıllık temel plan | `yillik` | 1 yıl, otomatik yenilenen | 149,99 TL (+ isteğe bağlı 7 gün ücretsiz deneme teklifi) |
-| Ömür boyu Pro | `pro_omur_boyu` | Tek seferlik ürün | 299,99 TL |
+| ↳ Aylık temel plan | `aylik` | 1 ay, otomatik yenilenen | 44,99 TL |
+| ↳ Yıllık temel plan | `yillik` | 1 yıl, otomatik yenilenen | 224,99 TL (+ isteğe bağlı 7 gün ücretsiz deneme teklifi) |
+| Ömür boyu Pro | `pro_omur_boyu` | Tek seferlik ürün | 449,99 TL |
 
 Kimlikler koddaki `BillingRepository` sabitleriyle birebir aynı olmalı.
