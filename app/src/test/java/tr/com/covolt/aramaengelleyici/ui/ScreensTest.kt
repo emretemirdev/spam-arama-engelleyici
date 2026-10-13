@@ -107,7 +107,7 @@ class ScreensTest {
     fun listsAddNumberAndShowError() {
         showApp(SampleData.state())
         clickInList("home_list", "Kara liste, beyaz liste ve önekler")
-        compose.onNodeWithText("0532 123 45 67").assertIsDisplayed() // kara listedeki numara (biçimli)
+        compose.onNodeWithText("0500 123 45 67").assertIsDisplayed() // kara listedeki numara (biçimli)
         actions.addToListResult = "Geçerli bir numara yaz."
         compose.onNodeWithTag("input_BLACK").performTextInput("abc")
         compose.onNodeWithTag("add_BLACK").performClick()
@@ -119,17 +119,17 @@ class ScreensTest {
     fun listsRemove() {
         showApp(SampleData.state())
         clickInList("home_list", "Kara liste, beyaz liste ve önekler")
-        compose.onNodeWithTag("remove_BLACK_05321234567").performClick()
-        assertTrue("remove:BLACK:05321234567" in actions.calls)
+        compose.onNodeWithTag("remove_BLACK_05001234567").performClick()
+        assertTrue("remove:BLACK:05001234567" in actions.calls)
     }
 
     @Test
     fun historyAllowCallsWhitelist() {
         showApp(SampleData.state())
         clickInList("home_list", "Engellenen aramalar")
-        compose.onNodeWithText("0850 222 33 44").assertIsDisplayed()
-        compose.onNodeWithTag("allow_08502223344").performClick()
-        assertTrue("add:WHITE:08502223344" in actions.calls)
+        compose.onNodeWithText("0850 000 00 01").assertIsDisplayed()
+        compose.onNodeWithTag("allow_08500000001").performClick()
+        assertTrue("add:WHITE:08500000001" in actions.calls)
     }
 
     @Test

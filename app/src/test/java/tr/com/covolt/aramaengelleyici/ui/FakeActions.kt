@@ -44,12 +44,12 @@ object SampleData {
     private const val MIN = 60_000L
 
     val history = listOf(
-        BlockedCall("08502223344", BlockReason.N0850, NOW - 12 * MIN),
-        BlockedCall("05339876543", BlockReason.UNKNOWN, NOW - 95 * MIN),
+        BlockedCall("08500000001", BlockReason.N0850, NOW - 12 * MIN),
+        BlockedCall("05000000002", BlockReason.UNKNOWN, NOW - 95 * MIN),
         BlockedCall("Gizli numara", BlockReason.HIDDEN, NOW - 5 * 60 * MIN),
         BlockedCall("+447700900123", BlockReason.INTERNATIONAL, NOW - 26 * 60 * MIN),
-        BlockedCall("4441234", BlockReason.N444, NOW - 30 * 60 * MIN),
-        BlockedCall("08504445566", BlockReason.N0850, NOW - 50 * 60 * MIN),
+        BlockedCall("4440000", BlockReason.N444, NOW - 30 * 60 * MIN),
+        BlockedCall("08500000003", BlockReason.N0850, NOW - 50 * 60 * MIN),
     )
 
     val offers = listOf(
@@ -81,8 +81,8 @@ object SampleData {
             blockInternational = isPro,
             blockAllUnknown = isPro,
             pausedUntilMillis = if (paused) NOW + 2 * 60 * MIN else 0L,
-            blacklist = setOf("05321234567", "02129998877"),
-            whitelist = setOf("08501112233"),
+            blacklist = setOf("05001234567", "02120000000"),
+            whitelist = setOf("08500001111"),
             customPrefixes = if (isPro) setOf("0212444") else emptySet(),
         ),
         roleHeld = roleHeld,

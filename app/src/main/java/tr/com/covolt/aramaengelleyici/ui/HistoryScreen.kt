@@ -84,7 +84,8 @@ fun HistoryScreen(
                                 style = MaterialTheme.typography.bodyLarge,
                             )
                             Text(
-                                "${call.reason.label} · ${formatDateTime(call.timeMillis)}",
+                                if (isHidden) formatDateTime(call.timeMillis)
+                                else "${call.reason.label} · ${formatDateTime(call.timeMillis)}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
