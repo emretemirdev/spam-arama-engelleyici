@@ -73,6 +73,16 @@ class SettingsStore(context: Context) {
         get() = readSet(K_PREFIX)
         set(value) = prefs.edit { putStringSet(K_PREFIX, HashSet(value)) }
 
+    /** Her engellenen aramada sessiz bir bildirim göster. */
+    var notifyOnBlock: Boolean
+        get() = prefs.getBoolean(K_NOTIFY_BLOCK, false)
+        set(value) = prefs.edit { putBoolean(K_NOTIFY_BLOCK, value) }
+
+    /** Haftada bir "bu hafta X arama engellendi" bildirimi. */
+    var weeklySummary: Boolean
+        get() = prefs.getBoolean(K_WEEKLY, true)
+        set(value) = prefs.edit { putBoolean(K_WEEKLY, value) }
+
     fun toConfig(): RuleConfig = RuleConfig(
         isPro = isPro,
         block0850 = block0850,
@@ -102,6 +112,8 @@ class SettingsStore(context: Context) {
         const val K_INTL = "block_international"
         const val K_UNKNOWN = "block_all_unknown"
         const val K_NIGHT = "night_mode"
+        const val K_NOTIFY_BLOCK = "notify_on_block"
+        const val K_WEEKLY = "weekly_summary"
         const val K_NIGHT_START = "night_start"
         const val K_NIGHT_END = "night_end"
         const val K_PAUSED = "paused_until"

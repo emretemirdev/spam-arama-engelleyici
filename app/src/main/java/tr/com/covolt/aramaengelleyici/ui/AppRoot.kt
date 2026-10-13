@@ -33,5 +33,6 @@ fun AppRoot(state: UiState, actions: AppActions) {
             onOpenPro = { screen = Screen.PRO },
         )
         Screen.PRO -> ProScreen(state, actions, snackbar, onBack = goHome)
+        Screen.SETTINGS -> SettingsScreen(state, actions, snackbar, onBack = goHome)
     }
 }

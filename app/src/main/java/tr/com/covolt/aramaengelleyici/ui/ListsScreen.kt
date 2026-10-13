@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import tr.com.covolt.aramaengelleyici.core.PhoneNumbers
@@ -50,6 +51,7 @@ fun ListsScreen(
         // Kenardan kenara ekranda klavye alanları örtmesin diye imePadding gerekiyor.
         LazyColumn(
             modifier = Modifier
+                .testTag("lists_list")
                 .fillMaxSize()
                 .padding(padding)
                 .consumeWindowInsets(padding)
@@ -65,7 +67,7 @@ fun ListsScreen(
                         "Bu numaralar her zaman engellenir. Ücretsiz sürümde en fazla " +
                             "${RuleEngine.FREE_BLACKLIST_LIMIT} numara."
                     },
-                    placeholder = "0532 123 45 67",
+                    placeholder = "Ör. 0532 111 22 33",
                     items = state.config.blacklist,
                     kind = ListKind.BLACK,
                     actions = actions,
@@ -76,7 +78,7 @@ fun ListsScreen(
                     title = "Beyaz liste",
                     description = "Rehberinde olmasa bile bu numaralar hiçbir kurala takılmaz. " +
                         "Kargo firması veya bankanın 0850 numarasını buraya ekleyebilirsin.",
-                    placeholder = "0850 123 45 67",
+                    placeholder = "Ör. 0850 111 22 33",
                     items = state.config.whitelist,
                     kind = ListKind.WHITE,
                     actions = actions,
@@ -87,7 +89,7 @@ fun ListsScreen(
                     ListSection(
                         title = "Engellenen önekler",
                         description = "Bu rakamlarla başlayan tüm numaralar engellenir. Örnek: 0212 444, +44",
-                        placeholder = "0212 444",
+                        placeholder = "Ör. 0212 444",
                         items = state.config.customPrefixes,
                         kind = ListKind.PREFIX,
                         actions = actions,
@@ -145,7 +147,9 @@ private fun ListSection(
                 singleLine = true,
                 isError = error != null,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("input_${kind.name}"),
             )
             Spacer(Modifier.width(8.dp))
             Button(
@@ -154,6 +158,7 @@ private fun ListSection(
                     if (error == null) input = ""
                 },
                 enabled = input.isNotBlank(),
+                modifier = Modifier.testTag("add_${kind.name}"),
             ) { Text("Ekle") }
         }
         error?.let {
@@ -170,7 +175,10 @@ private fun ListSection(
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f),
                 )
-                TextButton(onClick = { actions.removeFromList(kind, value) }) { Text("Kaldır") }
+                TextButton(
+                    onClick = { actions.removeFromList(kind, value) },
+                    modifier = Modifier.testTag("remove_${kind.name}_$value"),
+                ) { Text("Kaldır") }
             }
         }
     }

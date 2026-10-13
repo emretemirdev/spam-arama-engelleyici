@@ -6,10 +6,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
 
@@ -20,26 +23,61 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Birim testleri
-        run: ./gradlew testDebugUnitTest --stacktrace
+      # Birim + Robolectric + Compose arayüz testleri ve ekran görüntüleri.
+      - name: Testler
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest --continue 2>&1 | tee test.log
 
       - name: Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug 2>&1 | tee build.log
 
       - name: Lint
         run: ./gradlew lintDebug
         continue-on-error: true
 
-      # Lint bulgularını iş özetinde ve uyarı olarak göster (indirmeden okunabilsin).
-      - name: Lint bulguları
+      # Derleme hatalarını, başarısız testleri ve lint bulgularını uyarı olarak göster,
+      # böylece log indirmeden okunabilsin.
+      - name: Bulguları özetle
         if: always()
         run: |
+          cat test.log build.log 2>/dev/null | grep -E "^e: " | head -30 | while IFS= read -r line; do
+            echo "::error title=derleme::${line}"
+          done
+          python3 - <<'PY'
+          import glob, xml.etree.ElementTree as ET
+          n = 0
+          for f in glob.glob("app/build/test-results/testDebugUnitTest/*.xml"):
+              for case in ET.parse(f).getroot().iter("testcase"):
+                  for tag in ("failure", "error"):
+                      el = case.find(tag)
+                      if el is not None and n < 30:
+                          n += 1
+                          msg = (el.get("message") or el.text or "").strip().replace("\n", " ")[:600]
+                          print(f"::error title=test::{case.get('classname')}.{case.get('name')}: {msg}")
+          total = sum(int(ET.parse(f).getroot().get("tests", 0)) for f in glob.glob("app/build/test-results/testDebugUnitTest/*.xml"))
+          print(f"::notice title=testler::{total} test çalıştı, {n} başarısız")
+          PY
           f=app/build/reports/lint-results-debug.txt
-          [ -f "$f" ] || { echo "Lint raporu yok"; exit 0; }
-          tail -n 1 "$f"
-          grep -E ": (Error|Warning): " "$f" | head -45 | while IFS= read -r line; do
+          [ -f "$f" ] || exit 0
+          grep -E ": (Error|Warning): " "$f" | grep -v GradleDependency | head -40 | while IFS= read -r line; do
             echo "::warning title=lint::${line}"
           done
+
+      # Testlerin ürettiği ekran görüntülerini "screenshots" dalına koy.
+      - name: Ekran görüntülerini yayınla
+        if: always() && github.ref == 'refs/heads/main'
+        run: |
+          d=app/build/screenshots
+          [ -d "$d" ] && [ -n "$(ls -A $d)" ] || { echo "Ekran görüntüsü yok"; exit 0; }
+          cd "$d"
+          git init -q -b screenshots
+          git add .
+          git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" \
+            commit -qm "Ekran görüntüleri ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" screenshots
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -48,4 +86,5 @@ jobs:
           path: |
             app/build/outputs/apk/debug/*.apk
             app/build/reports/
+            app/build/screenshots/
           if-no-files-found: ignore

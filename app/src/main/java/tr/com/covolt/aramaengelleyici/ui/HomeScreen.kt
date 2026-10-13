@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,7 +44,9 @@ fun HomeScreen(
 ) {
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("home_list"),
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
@@ -128,24 +131,12 @@ fun HomeScreen(
                         subtitle = if (state.isPro) "Tüm kurallar açık" else "444, yurt dışı, gece modu ve rehber dışı koruma",
                         onClick = { onNavigate(Screen.PRO) },
                     )
-                }
-            }
-
-            item { SectionTitle("Daha fazlası") }
-            item {
-                AppCard {
+                    HorizontalDivider()
                     NavRow(
-                        title = "Ticari aramaları İYS'den reddet",
-                        subtitle = "Firmaların sana arama ve SMS izni resmi olarak kapansın",
-                        onClick = { actions.openUrl(Links.IYS) },
+                        title = "Ayarlar ve yardım",
+                        subtitle = "Bildirimler, gece saatleri, sık sorulanlar",
+                        onClick = { onNavigate(Screen.SETTINGS) },
                     )
-                    if (Links.PRIVACY_POLICY.isNotBlank()) {
-                        HorizontalDivider()
-                        NavRow(
-                            title = "Gizlilik politikası",
-                            onClick = { actions.openUrl(Links.PRIVACY_POLICY) },
-                        )
-                    }
                 }
             }
 
@@ -177,6 +168,7 @@ private fun ProtectionCard(state: UiState, actions: AppActions) {
                 if (on) "Koruma açık" else "Koruma kapalı",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.testTag("protection_title"),
             )
             Spacer(Modifier.height(6.dp))
             when {
@@ -184,6 +176,10 @@ private fun ProtectionCard(state: UiState, actions: AppActions) {
                     Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                         Stat(value = state.weekCount.toString(), label = "bu hafta engellendi")
                         Stat(value = state.totalCount.toString(), label = "toplam")
+                    }
+                    if (state.totalCount > 0) {
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedButton(onClick = actions::shareApp) { Text("Paylaş") }
                     }
                 }
                 !state.roleAvailable -> Text(
@@ -198,7 +194,12 @@ private fun ProtectionCard(state: UiState, actions: AppActions) {
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Spacer(Modifier.height(14.dp))
-                    Button(onClick = actions::enableProtection, modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = actions::enableProtection,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("enable_button"),
+                    ) {
                         Text("Korumayı aç")
                     }
                 }
@@ -274,7 +275,7 @@ private fun RuleRow(
             )
         }
         Spacer(Modifier.width(12.dp))
-        Switch(checked = checked, onCheckedChange = onChange)
+        Switch(checked = checked, onCheckedChange = onChange, modifier = Modifier.testTag("rule_${rule.name}"))
     }
 }
 

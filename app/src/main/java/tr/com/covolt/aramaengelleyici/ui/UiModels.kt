@@ -14,6 +14,10 @@ data class UiState(
     val totalCount: Long = 0,
     val history: List<BlockedCall> = emptyList(),
     val offers: List<BillingRepository.Offer> = emptyList(),
+    val notifyOnBlock: Boolean = false,
+    val weeklySummary: Boolean = true,
+    val notificationsAllowed: Boolean = true,
+    val versionName: String = "",
     val message: String? = null,
     val nowMillis: Long = System.currentTimeMillis(),
 ) {
@@ -21,7 +25,7 @@ data class UiState(
     val isPaused: Boolean get() = config.pausedUntilMillis > nowMillis
 }
 
-enum class Screen { HOME, HISTORY, LISTS, PRO }
+enum class Screen { HOME, HISTORY, LISTS, PRO, SETTINGS }
 
 enum class RuleToggle(val title: String, val description: String, val pro: Boolean) {
     B0850("0850 numaralarını engelle", "Çağrı merkezi, kampanya ve reklam aramaları", pro = false),
@@ -38,7 +42,7 @@ enum class RuleToggle(val title: String, val description: String, val pro: Boole
 
 enum class ListKind { BLACK, WHITE, PREFIX }
 
-/** Arayüzün tetiklediği işlemler. MainActivity uygular. */
+/** Arayüzün tetiklediği işlemler. MainActivity uygular; testlerde sahte sürüm kullanılır. */
 interface AppActions {
     fun enableProtection()
 
@@ -54,6 +58,12 @@ interface AppActions {
     fun clearHistory()
     fun purchase(offer: BillingRepository.Offer)
     fun restorePurchases()
+    fun setNotifyOnBlock(enabled: Boolean)
+    fun setWeeklySummary(enabled: Boolean)
+    fun openNotificationSettings()
+    fun setNightWindow(startMinute: Int, endMinute: Int)
+    fun shareApp()
+    fun rateApp()
     fun openUrl(url: String)
     fun messageShown()
 }

@@ -1,8 +1,11 @@
 package tr.com.covolt.aramaengelleyici
 
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,10 +20,13 @@ import tr.com.covolt.aramaengelleyici.core.RuleEngine
 import tr.com.covolt.aramaengelleyici.data.BlockAction
 import tr.com.covolt.aramaengelleyici.data.HistoryStore
 import tr.com.covolt.aramaengelleyici.data.SettingsStore
+import tr.com.covolt.aramaengelleyici.notifications.Notifier
+import tr.com.covolt.aramaengelleyici.notifications.WeeklySummaryWorker
 import tr.com.covolt.aramaengelleyici.screening.ScreeningRole
 import tr.com.covolt.aramaengelleyici.ui.AppActions
 import tr.com.covolt.aramaengelleyici.ui.AppRoot
 import tr.com.covolt.aramaengelleyici.ui.AppTheme
+import tr.com.covolt.aramaengelleyici.ui.Links
 import tr.com.covolt.aramaengelleyici.ui.ListKind
 import tr.com.covolt.aramaengelleyici.ui.RuleToggle
 import tr.com.covolt.aramaengelleyici.ui.UiState
@@ -47,6 +53,12 @@ class MainActivity : ComponentActivity(), AppActions {
             )
         }
 
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            refresh()
+            if (!granted) showMessage("Bildirim izni verilmedi. Ayarlardan daha sonra açabilirsin.")
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -57,6 +69,11 @@ class MainActivity : ComponentActivity(), AppActions {
             onProChanged = { runOnUiThread { refresh() } }
             onOffersChanged = { offers -> runOnUiThread { uiState = uiState.copy(offers = offers) } }
             onMessage = { message -> runOnUiThread { showMessage(message) } }
+        }
+
+        runCatching {
+            Notifier.ensureChannels(this)
+            WeeklySummaryWorker.sync(this, settings.weeklySummary)
         }
 
         refresh()
@@ -89,6 +106,10 @@ class MainActivity : ComponentActivity(), AppActions {
             weekCount = history.countSince(now - WEEK_MILLIS),
             totalCount = history.totalCount(),
             history = history.all(),
+            notifyOnBlock = settings.notifyOnBlock,
+            weeklySummary = settings.weeklySummary,
+            notificationsAllowed = Notifier.canPost(this),
+            versionName = BuildConfig.VERSION_NAME,
             nowMillis = now,
         )
     }
@@ -186,6 +207,67 @@ class MainActivity : ComponentActivity(), AppActions {
     override fun clearHistory() {
         history.clear()
         refresh()
+    }
+
+    override fun setNotifyOnBlock(enabled: Boolean) {
+        settings.notifyOnBlock = enabled
+        if (enabled) askNotificationPermissionIfNeeded()
+        refresh()
+    }
+
+    override fun setWeeklySummary(enabled: Boolean) {
+        settings.weeklySummary = enabled
+        runCatching { WeeklySummaryWorker.sync(this, enabled) }
+        if (enabled) askNotificationPermissionIfNeeded()
+        refresh()
+    }
+
+    override fun openNotificationSettings() {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            showMessage("Bildirim ayarları açılamadı.")
+        }
+    }
+
+    override fun setNightWindow(startMinute: Int, endMinute: Int) {
+        if (startMinute == endMinute) {
+            showMessage("Başlangıç ve bitiş saati aynı olamaz.")
+            return
+        }
+        settings.nightStartMinute = startMinute
+        settings.nightEndMinute = endMinute
+        refresh()
+    }
+
+    override fun shareApp() {
+        val week = uiState.weekCount
+        val text = if (week > 0) {
+            "Arama Engelle bu hafta $week istenmeyen aramayı benim yerime engelledi. " +
+                "0850, bahis ve gizli numaralı aramalardan kurtulmak için: ${Links.PLAY_STORE_WEB}"
+        } else {
+            "0850, bahis ve gizli numaralı aramaları engelleyen uygulama: ${Links.PLAY_STORE_WEB}"
+        }
+        val send = Intent(Intent.ACTION_SEND)
+            .setType("text/plain")
+            .putExtra(Intent.EXTRA_TEXT, text)
+        startActivity(Intent.createChooser(send, "Paylaş"))
+    }
+
+    override fun rateApp() {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Links.PLAY_STORE_APP.toUri()))
+        } catch (e: ActivityNotFoundException) {
+            openUrl(Links.PLAY_STORE_WEB)
+        }
+    }
+
+    private fun askNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !Notifier.canPost(this)) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     override fun purchase(offer: BillingRepository.Offer) {

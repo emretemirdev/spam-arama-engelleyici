@@ -11,12 +11,15 @@ object ScreeningRole {
         context.getSystemService(RoleManager::class.java)
 
     /** Telefon bu özelliği destekliyor mu? (Bazı üretici yazılımları desteklemeyebilir.) */
-    fun isAvailable(context: Context): Boolean =
+    fun isAvailable(context: Context): Boolean = runCatching {
         roleManager(context)?.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) == true
+    }.getOrDefault(false)
 
-    fun isHeld(context: Context): Boolean =
+    fun isHeld(context: Context): Boolean = runCatching {
         roleManager(context)?.isRoleHeld(RoleManager.ROLE_CALL_SCREENING) == true
+    }.getOrDefault(false)
 
-    fun requestIntent(context: Context): Intent? =
+    fun requestIntent(context: Context): Intent? = runCatching {
         roleManager(context)?.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)
+    }.getOrNull()
 }

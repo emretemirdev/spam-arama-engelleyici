@@ -36,7 +36,8 @@ class BillingRepository(
         val title: String,
         val price: String,
         val note: String,
-        val details: ProductDetails,
+        /** Testlerde ve önizlemelerde null olabilir; gerçek satın alma için zorunlu. */
+        val details: ProductDetails?,
         val offerToken: String?,
     )
 
@@ -126,8 +127,13 @@ class BillingRepository(
     }
 
     fun launchPurchase(activity: Activity, offer: Offer) {
+        val details = offer.details
+        if (details == null) {
+            onMessage?.invoke("Satın alma şu anda başlatılamıyor. Lütfen tekrar dene.")
+            return
+        }
         val productParams = BillingFlowParams.ProductDetailsParams.newBuilder()
-            .setProductDetails(offer.details)
+            .setProductDetails(details)
             .apply { offer.offerToken?.let { setOfferToken(it) } }
             .build()
         val flowParams = BillingFlowParams.newBuilder()

@@ -8,6 +8,9 @@
         olmayan numaraları gönderir; bu yüzden rehber izni gerekmez.
     -->
 
+    <!-- Yalnızca isteğe bağlı bildirimler için (engellenen arama, haftalık özet). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"

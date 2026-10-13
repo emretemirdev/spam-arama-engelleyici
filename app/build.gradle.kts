@@ -58,6 +58,18 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    testOptions {
+        unitTests {
+            // Robolectric testleri kaynaklara (string, tema, simge) erişebilsin.
+            isIncludeAndroidResources = true
+            all {
+                // Robolectric ekran görüntülerinin gerçeğe yakın çizilmesi için.
+                it.systemProperty("robolectric.pixelCopyRenderMode", "hardware")
+            }
+        }
     }
 }
 
@@ -78,8 +90,18 @@ dependencies {
     // Billing kütüphanesi eski bir fragment sürümünü getiriyor; Activity Result API için güncel sürüm.
     implementation("androidx.fragment:fragment-ktx:1.8.6")
 
+    // Haftalık özet bildirimi.
+    implementation("androidx.work:work-runtime:2.10.0")
+
     // Google Play Billing: abonelik ve ömür boyu Pro satın alımı.
     implementation("com.android.billingclient:billing:8.0.0")
 
     testImplementation("junit:junit:4.13.2")
+    // Android sınıflarını ve Compose ekranlarını JVM üzerinde çalıştıran testler.
+    testImplementation("org.robolectric:robolectric:4.17")
+    testImplementation("androidx.test:core-ktx:1.6.1")
+    testImplementation("androidx.test.ext:junit-ktx:1.2.1")
+    testImplementation(composeBom)
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

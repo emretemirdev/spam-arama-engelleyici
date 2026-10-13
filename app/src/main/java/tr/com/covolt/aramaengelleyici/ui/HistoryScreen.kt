@@ -25,9 +25,10 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import tr.com.covolt.aramaengelleyici.core.PhoneNumbers
-import tr.com.covolt.aramaengelleyici.screening.SpamScreeningService
+import tr.com.covolt.aramaengelleyici.screening.CallScreeningLogic
 
 @Composable
 fun HistoryScreen(
@@ -69,7 +70,7 @@ fun HistoryScreen(
                 ),
             ) {
                 items(state.history) { call ->
-                    val isHidden = call.number == SpamScreeningService.HIDDEN_LABEL
+                    val isHidden = call.number == CallScreeningLogic.HIDDEN_LABEL
                     val whitelisted = call.number in state.config.whitelist
                     Row(
                         modifier = Modifier
@@ -89,10 +90,13 @@ fun HistoryScreen(
                             )
                         }
                         if (!isHidden && !whitelisted) {
-                            TextButton(onClick = {
-                                val error = actions.addToList(ListKind.WHITE, call.number)
-                                if (error != null) scope.launch { snackbar.showSnackbar(error) }
-                            }) { Text("İzin ver") }
+                            TextButton(
+                                onClick = {
+                                    val error = actions.addToList(ListKind.WHITE, call.number)
+                                    if (error != null) scope.launch { snackbar.showSnackbar(error) }
+                                },
+                                modifier = Modifier.testTag("allow_${call.number}"),
+                            ) { Text("İzin ver") }
                         } else if (whitelisted) {
                             Text(
                                 "İzinli",
