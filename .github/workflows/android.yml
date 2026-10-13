@@ -71,7 +71,8 @@ jobs:
         if: always() && github.ref == 'refs/heads/main'
         run: |
           d=app/build/screenshots
-          [ -d "$d" ] && [ -n "$(ls -A $d)" ] || { echo "Ekran görüntüsü yok"; exit 0; }
+          [ -d "$d" ] && [ -n "$(ls -A $d)" ] || { echo "::notice title=ekran::Ekran görüntüsü yok"; exit 0; }
+          echo "::notice title=ekran::$(ls $d | wc -l) ekran görüntüsü: $(ls $d | tr '\n' ' ')"
           cd "$d"
           git init -q -b screenshots
           git add .

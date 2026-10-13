@@ -1,15 +1,13 @@
 package tr.com.covolt.aramaengelleyici.ui
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -26,13 +24,17 @@ import java.io.FileOutputStream
  */
 internal fun ComposeShooter.save(name: String) {
     rule.waitForIdle()
-    val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+    // Pencereyi doğrudan bir bitmap'e çiz (Robolectric'te PixelCopy'den daha güvenilir).
+    val view = rule.activity.window.decorView
+    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+    view.draw(Canvas(bitmap))
     val dir = File("build/screenshots").apply { mkdirs() }
     FileOutputStream(File(dir, "$name.png")).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    println("Ekran görüntüsü yazıldı: ${File(dir, "$name.png").absolutePath}")
 }
 
 internal class ComposeShooter(
-    val rule: androidx.compose.ui.test.junit4.AndroidComposeTestRule<*, *>,
+    val rule: androidx.compose.ui.test.junit4.AndroidComposeTestRule<*, ComponentActivity>,
 ) {
     fun shoot(name: String, content: @Composable () -> Unit) {
         rule.setContent {
@@ -99,7 +101,7 @@ class ScreenshotTest {
 
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(qualifiers = "w411dp-h822dp-xxhdpi-night")
+@Config(qualifiers = "w411dp-h822dp-night-xxhdpi")
 class DarkScreenshotTest {
 
     @get:Rule

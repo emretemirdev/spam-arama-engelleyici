@@ -60,7 +60,7 @@ class MainActivitySmokeTest {
 
         compose.onNodeWithTag("input_BLACK").performTextInput("05321110006")
         compose.onNodeWithTag("add_BLACK").performClick()
-        compose.onNodeWithText("Ücretsiz sürümde en fazla", substring = true).assertIsDisplayed()
+        compose.onNodeWithText("numara eklenebilir", substring = true).assertIsDisplayed()
         assertEquals(5, settings.blacklist.size)
     }
 
