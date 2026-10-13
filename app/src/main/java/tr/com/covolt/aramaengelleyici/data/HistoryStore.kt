@@ -1,6 +1,7 @@
 package tr.com.covolt.aramaengelleyici.data
 
 import android.content.Context
+import androidx.core.content.edit
 import org.json.JSONArray
 import org.json.JSONObject
 import tr.com.covolt.aramaengelleyici.core.BlockReason
@@ -21,10 +22,11 @@ class HistoryStore(context: Context) {
 
     fun add(call: BlockedCall) = synchronized(LOCK) {
         val updated = listOf(call) + all()
-        prefs.edit()
-            .putString(K_ENTRIES, encode(updated.take(MAX_ENTRIES)))
-            .putLong(K_TOTAL, totalCount() + 1)
-            .apply()
+        val total = totalCount() + 1
+        prefs.edit {
+            putString(K_ENTRIES, encode(updated.take(MAX_ENTRIES)))
+            putLong(K_TOTAL, total)
+        }
     }
 
     /** En yeni kayıt en başta. */
@@ -37,7 +39,7 @@ class HistoryStore(context: Context) {
     fun totalCount(): Long = prefs.getLong(K_TOTAL, 0L)
 
     fun clear() = synchronized(LOCK) {
-        prefs.edit().remove(K_ENTRIES).apply()
+        prefs.edit { remove(K_ENTRIES) }
     }
 
     private fun encode(list: List<BlockedCall>): String {

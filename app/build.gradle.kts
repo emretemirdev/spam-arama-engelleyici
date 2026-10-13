@@ -75,6 +75,8 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.core:core-ktx:1.16.0")
+    // Billing kütüphanesi eski bir fragment sürümünü getiriyor; Activity Result API için güncel sürüm.
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
 
     // Google Play Billing: abonelik ve ömür boyu Pro satın alımı.
     implementation("com.android.billingclient:billing:8.0.0")

@@ -2,6 +2,7 @@ package tr.com.covolt.aramaengelleyici.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import tr.com.covolt.aramaengelleyici.core.RuleConfig
 
 enum class BlockAction { REJECT, SILENCE }
@@ -17,60 +18,60 @@ class SettingsStore(context: Context) {
 
     var isPro: Boolean
         get() = prefs.getBoolean(K_PRO, false)
-        set(value) = prefs.edit().putBoolean(K_PRO, value).apply()
+        set(value) = prefs.edit { putBoolean(K_PRO, value) }
 
     var block0850: Boolean
         get() = prefs.getBoolean(K_0850, true)
-        set(value) = prefs.edit().putBoolean(K_0850, value).apply()
+        set(value) = prefs.edit { putBoolean(K_0850, value) }
 
     var block444: Boolean
         get() = prefs.getBoolean(K_444, false)
-        set(value) = prefs.edit().putBoolean(K_444, value).apply()
+        set(value) = prefs.edit { putBoolean(K_444, value) }
 
     var blockHidden: Boolean
         get() = prefs.getBoolean(K_HIDDEN, true)
-        set(value) = prefs.edit().putBoolean(K_HIDDEN, value).apply()
+        set(value) = prefs.edit { putBoolean(K_HIDDEN, value) }
 
     var blockInternational: Boolean
         get() = prefs.getBoolean(K_INTL, false)
-        set(value) = prefs.edit().putBoolean(K_INTL, value).apply()
+        set(value) = prefs.edit { putBoolean(K_INTL, value) }
 
     var blockAllUnknown: Boolean
         get() = prefs.getBoolean(K_UNKNOWN, false)
-        set(value) = prefs.edit().putBoolean(K_UNKNOWN, value).apply()
+        set(value) = prefs.edit { putBoolean(K_UNKNOWN, value) }
 
     var nightModeEnabled: Boolean
         get() = prefs.getBoolean(K_NIGHT, false)
-        set(value) = prefs.edit().putBoolean(K_NIGHT, value).apply()
+        set(value) = prefs.edit { putBoolean(K_NIGHT, value) }
 
     var nightStartMinute: Int
         get() = prefs.getInt(K_NIGHT_START, 23 * 60)
-        set(value) = prefs.edit().putInt(K_NIGHT_START, value).apply()
+        set(value) = prefs.edit { putInt(K_NIGHT_START, value) }
 
     var nightEndMinute: Int
         get() = prefs.getInt(K_NIGHT_END, 8 * 60)
-        set(value) = prefs.edit().putInt(K_NIGHT_END, value).apply()
+        set(value) = prefs.edit { putInt(K_NIGHT_END, value) }
 
     var pausedUntilMillis: Long
         get() = prefs.getLong(K_PAUSED, 0L)
-        set(value) = prefs.edit().putLong(K_PAUSED, value).apply()
+        set(value) = prefs.edit { putLong(K_PAUSED, value) }
 
     var action: BlockAction
         get() = runCatching { BlockAction.valueOf(prefs.getString(K_ACTION, null) ?: "") }
             .getOrDefault(BlockAction.REJECT)
-        set(value) = prefs.edit().putString(K_ACTION, value.name).apply()
+        set(value) = prefs.edit { putString(K_ACTION, value.name) }
 
     var blacklist: Set<String>
         get() = readSet(K_BLACK)
-        set(value) = prefs.edit().putStringSet(K_BLACK, HashSet(value)).apply()
+        set(value) = prefs.edit { putStringSet(K_BLACK, HashSet(value)) }
 
     var whitelist: Set<String>
         get() = readSet(K_WHITE)
-        set(value) = prefs.edit().putStringSet(K_WHITE, HashSet(value)).apply()
+        set(value) = prefs.edit { putStringSet(K_WHITE, HashSet(value)) }
 
     var customPrefixes: Set<String>
         get() = readSet(K_PREFIX)
-        set(value) = prefs.edit().putStringSet(K_PREFIX, HashSet(value)).apply()
+        set(value) = prefs.edit { putStringSet(K_PREFIX, HashSet(value)) }
 
     fun toConfig(): RuleConfig = RuleConfig(
         isPro = isPro,

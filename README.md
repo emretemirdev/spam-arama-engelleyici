@@ -37,6 +37,12 @@ Google Play'in kısıtlı izin beyan formuna da gerek yok.
 | Beyaz liste, kargo modu, geçmiş | ✓ | ✓ |
 | 444, yurt dışı, rehber dışı herkes, gece modu, önek engelleme | | ✓ |
 
+## Otomatik derleme
+
+Her `main` push'unda GitHub Actions birim testlerini çalıştırır, debug APK üretir ve lint
+bulgularını uyarı olarak gösterir (Actions sekmesi). APK, çalıştırmanın "Artifacts" bölümünden
+indirilebilir.
+
 ## Çalıştırma
 
 1. Android Studio ile klasörü aç (File > Open). Gradle senkronizasyonu bitsin.
@@ -53,13 +59,17 @@ Google Play'in kısıtlı izin beyan formuna da gerek yok.
 ## Play Console'a çıkış kontrol listesi
 
 - [ ] Kuruluş hesabı doğrulaması tamam (12 test kullanıcısı / 14 gün şartı yok)
-- [ ] İmzalama anahtarı oluştur, **Play App Signing** kullan; `.jks` dosyası repoya girmez
-- [ ] `Build > Generate Signed App Bundle` ile `.aab` üret
+- [ ] Yükleme anahtarı oluştur ve `keystore.properties.example` dosyasını `keystore.properties`
+      olarak kopyalayıp doldur (ikisi de repoya girmez); **Play App Signing** açık kalsın
+- [ ] `gradlew.bat bundleRelease` → `app/build/outputs/bundle/release/app-release.aab`
 - [ ] Uygulama içi ürünleri oluştur: `pro` (temel planlar `aylik`, `yillik`), `pro_omur_boyu`
       — fiyatlar `store/STORE_LISTING.md` içinde
 - [ ] Ayarlar > Lisans testi: kendi Gmail adresini ekle (ücretsiz test satın alması için)
-- [ ] Gizlilik politikasını herkese açık bir adreste yayınla (şirket sitesi gibi) ve
-      `ui/Links.kt` içindeki `PRIVACY_POLICY` sabitine yaz
+- [ ] `store/privacy-policy.html` dosyasındaki köşeli parantezleri doldurup şirket sitende yayınla,
+      adresi Play Console'a ve `ui/Links.kt` içindeki `PRIVACY_POLICY` sabitine yaz
+- [ ] Görseller: `store/graphics/icon-512.png` (uygulama simgesi) ve
+      `store/graphics/feature-graphic-1024x500.png` (öne çıkan grafik); ekran görüntülerini
+      gerçek telefondan al
 - [ ] Mağaza girişi: `store/STORE_LISTING.md`
 - [ ] Data safety: `store/STORE_LISTING.md` içindeki cevaplar
 - [ ] İçerik derecelendirmesi, hedef kitle (18+), reklam yok beyanı
